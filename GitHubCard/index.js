@@ -3,13 +3,14 @@
            https://api.github.com/users/<your name>
 */
 axios.get('https://api.github.com/users/michaelbarnes7282')
-.then( response => {
-  cards.append(createCard(response));
+  .then(response => {
+    // console.log(response);
+    cards.append(createCard(response.data));
 
-})
-.catch(error => {
-  console.log('the data was not returned', error);
-})
+  })
+  .catch(error => {
+    console.log('the data was not returned', error);
+  })
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -32,24 +33,35 @@ const cards = document.querySelector('.cards');
           user, and adding that card to the DOM.
 */
 
-const followersArray = [
-  "cladams0203",
-  "Ezra-Black",
-  "christianlewis024",
-  "mpaolodr",
-  "easpaas"
-];
+// const followersArray = [
+//   "cladams0203",
+//   "Ezra-Black",
+//   "christianlewis024",
+//   "mpaolodr",
+//   "easpaas"
+// ];
 
-followersArray.forEach( item => {
-  axios.get(`https://api.github.com/users/${item}`)
-.then( response => {
-  cards.append(createCard(response));
 
-})
-.catch(error => {
-  console.log('the data was not returned', error);
-})
-})
+axios.get(`https://api.github.com/users/michaelbarnes7282/followers`)
+  .then(response => {
+    // console.log(response.data);
+    response.data.forEach(item => {
+      console.log(item.url);
+      axios.get(item.url)
+        .then(response => {
+          // console.log(response);
+          cards.append(createCard(response.data));
+
+        })
+        .catch(error => {
+          console.log('the data was not returned', error);
+        })
+    })
+  })
+  .catch(error => {
+    console.log('the data was not returned', error);
+  })
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -70,19 +82,19 @@ followersArray.forEach( item => {
 </div>
 
 */
-function createCard(hub){
+function createCard(hub) {
   // Variable declarations
   const card = document.createElement('div'),
-        userImg = document.createElement('img'),
-        info = document.createElement('div'),
-        name = document.createElement('h3'),
-        userName = document.createElement('p'),
-        location = document.createElement('p'),
-        profile = document.createElement('p'),
-        link = document.createElement('a'),
-        followers = document.createElement('p'),
-        following = document.createElement('p'),
-        bio = document.createElement('p');
+    userImg = document.createElement('img'),
+    info = document.createElement('div'),
+    name = document.createElement('h3'),
+    userName = document.createElement('p'),
+    location = document.createElement('p'),
+    profile = document.createElement('p'),
+    link = document.createElement('a'),
+    followers = document.createElement('p'),
+    following = document.createElement('p'),
+    bio = document.createElement('p');
 
   // Adding classes
   card.classList.add('card');
@@ -91,27 +103,27 @@ function createCard(hub){
   userName.classList.add('username');
 
   // Assigning Values
-  userImg.src = hub.data.avatar_url;
-  name.textContent = hub.data.name;
-  userName.textContent = hub.data.login;
-  location.textContent = hub.data.location;
+  userImg.src = hub.avatar_url;
+  name.textContent = hub.name;
+  userName.textContent = hub.login;
+  location.textContent = `Location: ${hub.location}`;
   profile.textContent = `Profile: ${link}`;
-  link.textContent = hub.data.html_url;
-  link.href = hub.data.html_url;
-  followers.textContent = `Followers: ${hub.data.followers}`;
-  following.textContent = `Following: ${hub.data.following}`;
-  bio.textContent = `Bio: ${hub.data.bio}`;
+  link.textContent = hub.html_url;
+  link.href = hub.html_url;
+  followers.textContent = `Followers: ${hub.followers}`;
+  following.textContent = `Following: ${hub.following}`;
+  bio.textContent = `Bio: ${hub.bio}`;
 
   // Appending to parents
   card.append(userImg, info);
-  info.append(name, userName, location, profile, followers, following, bio,);
+  info.append(name, userName, location, profile, followers, following, bio);
   profile.appendChild(link);
 
   return card;
 }
 
 
-/* List of LS Instructors Github username's: 
+/* List of LS Instructors Github username's:
   tetondan
   dustinmyers
   justsml
