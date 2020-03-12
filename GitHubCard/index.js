@@ -4,7 +4,6 @@
 */
 axios.get('https://api.github.com/users/michaelbarnes7282')
 .then( response => {
-  console.log(response.data);
   cards.append(createCard(response));
 
 })
@@ -35,16 +34,15 @@ const cards = document.querySelector('.cards');
 
 const followersArray = [
   "cladams0203",
-  "Ezera-Black",
+  "Ezra-Black",
   "christianlewis024",
   "mpaolodr",
   "easpaas"
 ];
 
-followersArray.forEach(item => {
+followersArray.forEach( item => {
   axios.get(`https://api.github.com/users/${item}`)
 .then( response => {
-  console.log(response.data);
   cards.append(createCard(response));
 
 })
@@ -61,7 +59,8 @@ followersArray.forEach(item => {
   <div class="card-info">
     <h3 class="name">{users name}</h3>
     <p class="username">{users user name}</p>
-    <p>Location: {users location}</p>      
+    <p>Location: {users location}</p>
+    <p>Profile:  
       <a href={address to users github page}>{address to users github page}</a>
     </p>
     <p>Followers: {users followers count}</p>
@@ -79,6 +78,7 @@ function createCard(hub){
         name = document.createElement('h3'),
         userName = document.createElement('p'),
         location = document.createElement('p'),
+        profile = document.createElement('p'),
         link = document.createElement('a'),
         followers = document.createElement('p'),
         following = document.createElement('p'),
@@ -90,21 +90,22 @@ function createCard(hub){
   name.classList.add('name');
   userName.classList.add('username');
 
-  // Appending to parents
-  card.append(userImg, info);
-  info.append(name, userName, location, followers, following, bio);
-  location.append(link);
-
   // Assigning Values
   userImg.src = hub.data.avatar_url;
   name.textContent = hub.data.name;
   userName.textContent = hub.data.login;
   location.textContent = hub.data.location;
-  link.textContent = hub.data.url;
-  followers.textContent = hub.data.followers;
-  following.textContent = hub.data.following;
-  bio.textContent = hub.data.bio;
-  
+  profile.textContent = `Profile: ${link}`;
+  link.textContent = hub.data.html_url;
+  link.href = hub.data.html_url;
+  followers.textContent = `Followers: ${hub.data.followers}`;
+  following.textContent = `Following: ${hub.data.following}`;
+  bio.textContent = `Bio: ${hub.data.bio}`;
+
+  // Appending to parents
+  card.append(userImg, info);
+  info.append(name, userName, location, profile, followers, following, bio,);
+  profile.appendChild(link);
 
   return card;
 }
